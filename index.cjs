@@ -89,6 +89,7 @@ async function tokenRequest(provider, body, options = {}) {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded" },
     body: body.toString(),
+    signal: AbortSignal.timeout(20_000),
   });
   if (!response.ok) throw new Error(`${provider} token request failed (${response.status})`);
   const json = await response.json();

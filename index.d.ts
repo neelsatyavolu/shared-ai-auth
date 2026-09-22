@@ -7,7 +7,7 @@ export declare const providers: Record<Provider, { clientId: string; redirectUri
 export declare const MODEL_CATALOG_URL: string;
 export declare const bundledModels: ModelCatalog;
 export declare function generatePkce(): PKCE;
-export declare function authorizeUrl(provider: Provider, pkce: PKCE): string;
+export declare function authorizeUrl(provider: Provider, pkce: Pick<PKCE, "challenge" | "state">): string;
 export declare function parseCallback(input: string): { code: string | null; state: string | null; error: string | null };
 export declare function exchangeCode(provider: Provider, code: string, verifier: string, options?: { fetch?: typeof fetch }): Promise<Tokens>;
 export declare function refreshTokens(provider: Provider, refreshToken: string, options?: { fetch?: typeof fetch; previous?: Tokens }): Promise<Tokens>;
