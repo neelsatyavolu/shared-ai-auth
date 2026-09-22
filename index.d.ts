@@ -1,0 +1,14 @@
+export type Provider = "codex" | "grok";
+export type PKCE = { verifier: string; challenge: string; state: string };
+export type Tokens = { accessToken: string; refreshToken: string; expiresAt: number; idToken?: string; accountId?: string };
+export type Model = { id: string; label: string; tier?: string; effort?: string };
+export type ModelCatalog = { version: 1; codex: Model[]; grok: Model[] };
+export declare const providers: Record<Provider, { clientId: string; redirectUri: string; authorizeUrl: string; tokenUrl: string; scope: string; expirySkew: number; extraAuthorizeParams: Record<string, string> }>;
+export declare const MODEL_CATALOG_URL: string;
+export declare const bundledModels: ModelCatalog;
+export declare function generatePkce(): PKCE;
+export declare function authorizeUrl(provider: Provider, pkce: PKCE): string;
+export declare function parseCallback(input: string): { code: string | null; state: string | null; error: string | null };
+export declare function exchangeCode(provider: Provider, code: string, verifier: string, options?: { fetch?: typeof fetch }): Promise<Tokens>;
+export declare function refreshTokens(provider: Provider, refreshToken: string, options?: { fetch?: typeof fetch; previous?: Tokens }): Promise<Tokens>;
+export declare function loadModels(options?: { url?: string; fallback?: ModelCatalog; fetch?: typeof fetch }): Promise<ModelCatalog>;
