@@ -1,9 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
-  providers, generatePkce, authorizeUrl, parseCallback,
+  providers, bundledModels, generatePkce, authorizeUrl, parseCallback,
   exchangeCode, refreshTokens, loadModels, selectModels,
 } from "../index.mjs";
+
+test("bundled catalog offers only the five selected models", () => {
+  assert.deepEqual(bundledModels.codex.map((model) => model.id), ["gpt-6-astra", "gpt-6-sol", "gpt-6-luna"]);
+  assert.deepEqual(bundledModels.grok.map((model) => model.id), ["grok-4.7", "grok-4.6"]);
+});
 
 test("both providers generate an S256 authorization URL with their own redirect", () => {
   const pkce = generatePkce();
