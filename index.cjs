@@ -140,4 +140,11 @@ async function loadModels({ url = MODEL_CATALOG_URL, fallback = bundledModels, f
   }
 }
 
-module.exports = { providers, MODEL_CATALOG_URL, bundledModels, generatePkce, authorizeUrl, parseCallback, exchangeCode, refreshTokens, loadModels };
+function selectModels(catalog, provider, hiddenIds = []) {
+  config(provider);
+  if (!validModels(catalog)) throw new Error("Invalid model catalog");
+  const hidden = new Set(hiddenIds);
+  return catalog[provider].filter((model) => !hidden.has(model.id));
+}
+
+module.exports = { providers, MODEL_CATALOG_URL, bundledModels, generatePkce, authorizeUrl, parseCallback, exchangeCode, refreshTokens, loadModels, selectModels };

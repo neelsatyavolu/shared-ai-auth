@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import {
   providers, generatePkce, authorizeUrl, parseCallback,
-  exchangeCode, refreshTokens, loadModels,
+  exchangeCode, refreshTokens, loadModels, selectModels,
 } from "../index.mjs";
 
 test("both providers generate an S256 authorization URL with their own redirect", () => {
@@ -50,4 +50,10 @@ test("model loading validates remote data and uses bundled fallback on failure",
   assert.deepEqual(failed, fallback);
   const invalid = await loadModels({ url: "https://example.test/models.json", fallback, fetch: async () => ({ ok: true, json: async () => ({ codex: [] }) }) });
   assert.deepEqual(invalid, fallback);
+});
+
+test("hidden models are removed while new catalog models remain visible", () => {
+  const catalog = { version: 1, codex: [{ id: "old", label: "Old" }, { id: "new", label: "New" }], grok: [{ id: "grok", label: "Grok" }] };
+  assert.deepEqual(selectModels(catalog, "codex", ["old"]).map((model) => model.id), ["new"]);
+  assert.deepEqual(selectModels(catalog, "grok", ["old"]).map((model) => model.id), ["grok"]);
 });

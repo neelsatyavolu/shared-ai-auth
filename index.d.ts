@@ -12,3 +12,4 @@ export declare function parseCallback(input: string): { code: string | null; sta
 export declare function exchangeCode(provider: Provider, code: string, verifier: string, options?: { fetch?: typeof fetch }): Promise<Tokens>;
 export declare function refreshTokens(provider: Provider, refreshToken: string, options?: { fetch?: typeof fetch; previous?: Tokens }): Promise<Tokens>;
 export declare function loadModels(options?: { url?: string; fallback?: ModelCatalog; fetch?: typeof fetch }): Promise<ModelCatalog>;
+export declare function selectModels(catalog: ModelCatalog, provider: Provider, hiddenIds?: readonly string[]): Model[];

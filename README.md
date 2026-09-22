@@ -7,7 +7,7 @@ This package holds the Codex and Grok OAuth client settings and PKCE/token helpe
 Install from the public GitHub repository, then use:
 
 ```js
-import { generatePkce, authorizeUrl, parseCallback, exchangeCode, refreshTokens, loadModels } from "@neelsatyavolu/shared-ai-auth";
+import { generatePkce, authorizeUrl, parseCallback, exchangeCode, refreshTokens, loadModels, selectModels } from "@neelsatyavolu/shared-ai-auth";
 
 const pkce = generatePkce();
 const signInUrl = authorizeUrl("codex", pkce);
@@ -16,8 +16,11 @@ const callback = parseCallback(pastedUrl);
 if (callback.error || callback.state !== pkce.state || !callback.code) throw new Error("Invalid sign-in response");
 const tokens = await exchangeCode("codex", callback.code, pkce.verifier);
 const catalog = await loadModels();
+const visible = selectModels(catalog, "codex", projectHiddenModelIds);
 ```
 
 For Grok, use `"grok"` and accept its bare authorization code when the provider displays one. A bare code has no state; bind it to the pending local PKCE attempt. Keep refresh tokens in the app's existing secure store. Call `refreshTokens(provider, token, { previous: savedTokens })` to preserve a rotated or omitted refresh token and the Codex account ID.
+
+Projects can use the full catalog or pass a local blacklist of model IDs to `selectModels`. New catalog entries are visible by default unless their IDs appear on that blacklist.
 
 The listed OAuth client IDs and redirect URIs belong to the existing CLI flows. Verify provider terms and current endpoints before changing them. This helper does not register a new OAuth application or host callbacks.
