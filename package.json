@@ -1,6 +1,7 @@
 {
   "name": "@neelsatyavolu/shared-ai-auth",
   "version": "0.1.3",
+  "license": "MIT",
   "private": false,
   "type": "module",
   "exports": {

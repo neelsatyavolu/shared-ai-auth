@@ -24,3 +24,5 @@ For Grok, use `"grok"` and accept its bare authorization code when the provider 
 Projects can use the full catalog or pass a local blacklist of model IDs to `selectModels`. New catalog entries are visible by default unless their IDs appear on that blacklist.
 
 The listed OAuth client IDs and redirect URIs belong to the existing CLI flows. Verify provider terms and current endpoints before changing them. This helper does not register a new OAuth application or host callbacks.
+
+Released under the [MIT license](LICENSE).
