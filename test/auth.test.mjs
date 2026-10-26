@@ -5,8 +5,8 @@ import {
   exchangeCode, refreshTokens, loadModels, selectModels,
 } from "../index.mjs";
 
-test("bundled catalog offers only the five selected models", () => {
-  assert.deepEqual(bundledModels.codex.map((model) => model.id), ["gpt-6-astra", "gpt-6.1-sol", "gpt-6-luna"]);
+test("bundled catalog offers only the six selected models", () => {
+  assert.deepEqual(bundledModels.codex.map((model) => model.id), ["gpt-6-astra", "gpt-6.1-sol", "gpt-6.1-terra", "gpt-6-luna"]);
   assert.deepEqual(bundledModels.grok.map((model) => model.id), ["grok-4.7", "grok-4.6"]);
 });
 
