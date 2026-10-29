@@ -4,7 +4,13 @@ This package holds the Codex and Grok OAuth client settings and PKCE/token helpe
 
 `models.json` is the single editable model list. Already deployed apps can refresh it from `MODEL_CATALOG_URL`; `loadModels()` returns the bundled snapshot if the public file is unavailable or invalid. Call it on the server or in the desktop main process, and cache the result for a few minutes in the app. Do not fetch OAuth tokens or the model catalog from an untrusted URL.
 
-Install from the public GitHub repository, then use:
+It is not on npm. Install it from GitHub, pinned to a commit (Node 18 or later):
+
+```sh
+npm install github:neelsatyavolu/shared-ai-auth#<commit>
+```
+
+Then use:
 
 ```js
 import { generatePkce, authorizeUrl, parseCallback, exchangeCode, refreshTokens, loadModels, selectModels } from "@neelsatyavolu/shared-ai-auth";
@@ -24,5 +30,7 @@ For Grok, use `"grok"` and accept its bare authorization code when the provider 
 Projects can use the full catalog or pass a local blacklist of model IDs to `selectModels`. New catalog entries are visible by default unless their IDs appear on that blacklist.
 
 The listed OAuth client IDs and redirect URIs belong to the existing CLI flows. Verify provider terms and current endpoints before changing them. This helper does not register a new OAuth application or host callbacks.
+
+`skills/shared-ai-auth/SKILL.md` is an agent skill describing how to wire this package into an app. Run the tests with `npm test`.
 
 Released under the [MIT license](LICENSE).
