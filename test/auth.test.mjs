@@ -3,11 +3,63 @@ import test from "node:test";
 import {
   providers, bundledModels, generatePkce, authorizeUrl, parseCallback,
   exchangeCode, refreshTokens, loadModels, selectModels,
+  CLAUDE_CODE_VERSION, claudeRequest, claudeRequiredVersion,
 } from "../index.mjs";
+import { createHash } from "node:crypto";
 
 test("bundled catalog offers only the six selected models", () => {
   assert.deepEqual(bundledModels.codex.map((model) => model.id), ["gpt-6-astra", "gpt-6.1-sol", "gpt-6.1-terra", "gpt-6-luna"]);
   assert.deepEqual(bundledModels.grok.map((model) => model.id), ["grok-4.7", "grok-4.6"]);
+  assert.deepEqual(bundledModels.claude.map((model) => model.id), ["claude-fable-5-2", "claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"]);
+});
+
+test("claude signs in at claude.com with the manual callback and code=true", () => {
+  const pkce = generatePkce();
+  const url = new URL(authorizeUrl("claude", pkce));
+  assert.equal(url.origin + url.pathname, "https://claude.com/cai/oauth/authorize");
+  assert.equal(url.searchParams.get("code"), "true");
+  assert.equal(url.searchParams.get("redirect_uri"), "https://platform.claude.com/oauth/code/callback");
+  assert.match(url.searchParams.get("scope"), /user:inference/);
+  assert.deepEqual(parseCallback("the-code#the-state"), { code: "the-code", state: "the-state", error: null });
+});
+
+test("claude token requests are JSON and carry the state", async () => {
+  const calls = [];
+  const fetcher = async (url, init) => {
+    calls.push({ url, type: init.headers["content-type"], body: JSON.parse(init.body) });
+    return { ok: true, json: async () => ({ access_token: "sk-ant-oat01-a", refresh_token: "sk-ant-ort01-r", expires_in: 28800 }) };
+  };
+  await assert.rejects(exchangeCode("claude", "c", "v", { fetch: fetcher }), /state/);
+  const tokens = await exchangeCode("claude", "c", "v", { fetch: fetcher, state: "s" });
+  assert.equal(calls[0].url, "https://platform.claude.com/v1/oauth/token");
+  assert.equal(calls[0].type, "application/json");
+  assert.deepEqual(calls[0].body, { grant_type: "authorization_code", code: "c", redirect_uri: providers.claude.redirectUri, client_id: providers.claude.clientId, code_verifier: "v", state: "s" });
+  await refreshTokens("claude", tokens.refreshToken, { fetch: fetcher, previous: tokens });
+  assert.equal(calls[1].body.grant_type, "refresh_token");
+  assert.equal(calls[1].body.scope, providers.claude.scope);
+});
+
+test("claudeRequest adds the billing line and OAuth headers and drops the identity line", () => {
+  const body = { model: "claude-sonnet-5-5", system: [{ type: "text", text: "You are Claude Code, Anthropic's official CLI for Claude." }, { type: "text", text: "You are Perch." }], messages: [{ role: "user", content: [{ type: "text", text: "Find the cheapest SSD" }] }] };
+  const out = claudeRequest(body, { accessToken: "tok", betas: ["fast-mode-2026-02-01"] });
+  const sampled = ["Find the cheapest SSD"[4], "Find the cheapest SSD"[7], "Find the cheapest SSD"[20]].join("");
+  const hash = createHash("sha256").update(`59cf53e54c78${sampled}${CLAUDE_CODE_VERSION}`).digest("hex").slice(0, 3);
+  assert.deepEqual(out.body.system.map((b) => b.text), [`x-anthropic-billing-header: cc_version=${CLAUDE_CODE_VERSION}.${hash}; cc_entrypoint=cli; cch=00000;`, "You are Perch."]);
+  assert.equal(out.headers.authorization, "Bearer tok");
+  assert.equal(out.headers["anthropic-beta"], "oauth-2025-04-20,fast-mode-2026-02-01");
+  assert.equal(out.headers["user-agent"], `claude-cli/${CLAUDE_CODE_VERSION} (external, cli)`);
+  assert.equal(out.url, "https://api.anthropic.com/v1/messages");
+  assert.equal(body.system.length, 2, "the input body is not changed");
+  assert.equal(claudeRequest({ system: "Plain", messages: [] }, { accessToken: "t" }).body.system[1].text, "Plain");
+  assert.equal(claudeRequiredVersion("Claude Code 2.1.226 does not support this model; version 2.1.251 or newer is required."), "2.1.251");
+  assert.equal(claudeRequiredVersion("overloaded"), null);
+});
+
+test("older catalogs without claude stay valid", async () => {
+  const old = { version: 1, codex: [{ id: "a", label: "A" }], grok: [{ id: "g", label: "G" }] };
+  const loaded = await loadModels({ url: "https://example.test/m.json", fetch: async () => ({ ok: true, json: async () => old }) });
+  assert.deepEqual(loaded, old);
+  assert.deepEqual(selectModels(old, "claude"), []);
 });
 
 test("both providers generate an S256 authorization URL with their own redirect", () => {

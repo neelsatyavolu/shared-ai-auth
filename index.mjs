@@ -1,3 +1,6 @@
 import shared from "./index.cjs";
 
-export const { providers, MODEL_CATALOG_URL, bundledModels, generatePkce, authorizeUrl, parseCallback, exchangeCode, refreshTokens, loadModels, selectModels } = shared;
+export const {
+  providers, MODEL_CATALOG_URL, bundledModels, generatePkce, authorizeUrl, parseCallback, exchangeCode, refreshTokens, loadModels, selectModels,
+  CLAUDE_CODE_VERSION, claudeRequest, claudeRequiredVersion,
+} = shared;

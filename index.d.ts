@@ -1,15 +1,20 @@
-export type Provider = "codex" | "grok";
+export type Provider = "codex" | "grok" | "claude";
 export type PKCE = { verifier: string; challenge: string; state: string };
 export type Tokens = { accessToken: string; refreshToken: string; expiresAt: number; idToken?: string; accountId?: string };
 export type Model = { id: string; label: string; tier?: string; effort?: string };
-export type ModelCatalog = { version: 1; codex: Model[]; grok: Model[] };
-export declare const providers: Record<Provider, { clientId: string; redirectUri: string; authorizeUrl: string; tokenUrl: string; scope: string; expirySkew: number; extraAuthorizeParams: Record<string, string> }>;
+export type ModelCatalog = { version: 1; codex: Model[]; grok: Model[]; claude?: Model[] };
+export declare const providers: Record<Provider, { clientId: string; redirectUri: string; authorizeUrl: string; tokenUrl: string; scope: string; expirySkew: number; extraAuthorizeParams: Record<string, string>; tokenFormat?: "json" }>;
 export declare const MODEL_CATALOG_URL: string;
 export declare const bundledModels: ModelCatalog;
 export declare function generatePkce(): PKCE;
 export declare function authorizeUrl(provider: Provider, pkce: Pick<PKCE, "challenge" | "state">): string;
 export declare function parseCallback(input: string): { code: string | null; state: string | null; error: string | null };
-export declare function exchangeCode(provider: Provider, code: string, verifier: string, options?: { fetch?: typeof fetch }): Promise<Tokens>;
+/** For claude, pass the `state` that came with the code (`code#state`). */
+export declare function exchangeCode(provider: Provider, code: string, verifier: string, options?: { fetch?: typeof fetch; state?: string }): Promise<Tokens>;
 export declare function refreshTokens(provider: Provider, refreshToken: string, options?: { fetch?: typeof fetch; previous?: Tokens }): Promise<Tokens>;
 export declare function loadModels(options?: { url?: string; fallback?: ModelCatalog; fetch?: typeof fetch }): Promise<ModelCatalog>;
 export declare function selectModels(catalog: ModelCatalog, provider: Provider, hiddenIds?: readonly string[]): Model[];
+export declare const CLAUDE_CODE_VERSION: string;
+/** An Anthropic Messages request made ready for a Claude subscription token. */
+export declare function claudeRequest<B extends { system?: unknown; messages?: unknown }>(body: B, options: { accessToken: string; version?: string; entrypoint?: string; betas?: string[]; url?: string }): { url: string; headers: Record<string, string>; body: B & { system: { type: "text"; text: string }[] } };
+export declare function claudeRequiredVersion(message: string): string | null;

@@ -1,13 +1,15 @@
 ---
 name: shared-ai-auth
-description: Use when adding or changing Codex or Grok subscription OAuth, callback handling, token refresh, or selectable model lists in Neel's web and desktop apps.
+description: Use when adding or changing Codex, Grok or Claude subscription OAuth, callback handling, token refresh, or selectable model lists in Neel's web and desktop apps.
 ---
 
-# Shared Codex and Grok auth
+# Shared Codex, Grok and Claude auth
 
 Use the public `neelsatyavolu/shared-ai-auth` repository as the shared source. Its Node package exports provider configuration, PKCE, authorization URL, callback parser, token exchange, refresh, and a live model catalog loader. `models.json` in that repository is the one editable model list. The public catalog URL is exported as `MODEL_CATALOG_URL`.
 
 For Node web apps and Electron main processes, import the package instead of copying client IDs, redirect URIs, scopes, and token request code. Keep callback route/listener, pending state/verifier, cookies or Keychain, and AI request code in the app. Verify state for URL callbacks; Grok's displayed bare code has no state and must be associated with one pending local attempt. Store tokens only in the app's existing secure store.
+
+Claude (Pro or Max) signs in with a pasted `code#state` and needs `state` in `exchangeCode`. Send every Claude request through `claudeRequest(body, { accessToken })` and retry once with `claudeRequiredVersion(errorMessage)` when Anthropic asks for a newer Claude Code version. The catalog's `claude` list is optional for older catalogs, so treat a missing list as empty.
 
 For model pickers, use the full catalog or apply a project-level ID blacklist with `selectModels`. An ID is visible by default, so newly published models appear automatically unless a project explicitly blacklists them.
 

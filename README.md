@@ -1,6 +1,6 @@
-# Shared Codex and Grok sign-in
+# Shared Codex, Grok and Claude sign-in
 
-This package holds the Codex and Grok OAuth client settings and PKCE/token helpers used by Neel's Node web and Electron apps. Apps own their callback listener or pasted-code UI and their secure token storage. The same package works from ESM and CommonJS.
+This package holds the Codex, Grok and Claude OAuth client settings and PKCE/token helpers used by Neel's Node web and Electron apps. Apps own their callback listener or pasted-code UI and their secure token storage. The same package works from ESM and CommonJS.
 
 `models.json` is the single editable model list. Already deployed apps can refresh it from `MODEL_CATALOG_URL`; `loadModels()` returns the bundled snapshot if the public file is unavailable or invalid. Call it on the server or in the desktop main process, and cache the result for a few minutes in the app. Do not fetch OAuth tokens or the model catalog from an untrusted URL.
 
@@ -24,6 +24,8 @@ const tokens = await exchangeCode("codex", callback.code, pkce.verifier);
 const catalog = await loadModels();
 const visible = selectModels(catalog, "codex", projectHiddenModelIds);
 ```
+
+For Claude (a Pro or Max subscription), use `"claude"`. Its callback page shows `code#state` for the user to paste; `parseCallback` splits it, and `exchangeCode("claude", code, verifier, { state })` needs that state. Claude's subscription backend accepts only requests shaped like Claude Code's, so build each Anthropic Messages request with `claudeRequest(body, { accessToken })`, which returns the URL, headers and body to send. When a response says "version X or newer is required", pass `claudeRequiredVersion(message)` as `version` and retry once. This is the same adaptation as [pi-claude-oauth-adapter](https://github.com/minzique/pi-claude-oauth-adapter) (MIT); check Anthropic's terms for your use.
 
 For Grok, use `"grok"` and accept its bare authorization code when the provider displays one. A bare code has no state; bind it to the pending local PKCE attempt. Keep refresh tokens in the app's existing secure store. Call `refreshTokens(provider, token, { previous: savedTokens })` to preserve a rotated or omitted refresh token and the Codex account ID.
 
