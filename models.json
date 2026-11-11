@@ -1,19 +1,19 @@
 {
   "version": 1,
   "codex": [
-    { "id": "gpt-6-astra", "label": "GPT-6 Astra", "tier": "flagship" },
-    { "id": "gpt-6.1-sol", "label": "GPT-6.1 Sol", "tier": "" },
-    { "id": "gpt-6.1-terra", "label": "GPT-6.1 Terra", "tier": "" },
-    { "id": "gpt-6-luna", "label": "GPT-6 Luna", "tier": "fast", "effort": "medium" }
+    { "id": "gpt-6-astra", "label": "GPT-6 Astra", "tier": "flagship", "efforts": ["low", "medium", "high", "xhigh", "max", "ultra"] },
+    { "id": "gpt-6.1-sol", "label": "GPT-6.1 Sol", "tier": "", "efforts": ["low", "medium", "high", "xhigh", "max", "ultra"] },
+    { "id": "gpt-6.1-terra", "label": "GPT-6.1 Terra", "tier": "", "efforts": ["low", "medium", "high", "xhigh", "max", "ultra"] },
+    { "id": "gpt-6-luna", "label": "GPT-6 Luna", "tier": "fast", "effort": "medium", "efforts": ["low", "medium", "high", "xhigh", "max"] }
   ],
   "grok": [
-    { "id": "grok-4.7", "label": "Grok 4.7", "tier": "" },
-    { "id": "grok-4.6", "label": "Grok 4.6", "tier": "" }
+    { "id": "grok-4.7", "label": "Grok 4.7", "tier": "", "efforts": ["low", "medium", "high"] },
+    { "id": "grok-4.6", "label": "Grok 4.6", "tier": "", "efforts": ["low", "medium", "high"] }
   ],
   "claude": [
-    { "id": "claude-fable-5-2", "label": "Claude Fable 5.2", "tier": "flagship" },
-    { "id": "claude-opus-5-5", "label": "Claude Opus 5.5", "tier": "" },
-    { "id": "claude-sonnet-5-5", "label": "Claude Sonnet 5.5", "tier": "" },
-    { "id": "claude-haiku-5-5", "label": "Claude Haiku 5.5", "tier": "fast" }
+    { "id": "claude-fable-5-2", "label": "Claude Fable 5.2", "tier": "flagship", "efforts": ["low", "medium", "high", "xhigh", "max"] },
+    { "id": "claude-opus-5-5", "label": "Claude Opus 5.5", "tier": "", "efforts": ["low", "medium", "high", "xhigh", "max"] },
+    { "id": "claude-sonnet-5-5", "label": "Claude Sonnet 5.5", "tier": "", "efforts": ["low", "medium", "high", "xhigh", "max"] },
+    { "id": "claude-haiku-5-5", "label": "Claude Haiku 5.5", "tier": "fast", "efforts": ["low", "medium", "high"] }
   ]
 }

@@ -144,7 +144,8 @@ function refreshTokens(provider, refreshToken, options = {}) {
 
 function validList(list) {
   return Array.isArray(list) && list.length > 0 && list.every((model) =>
-    model && typeof model.id === "string" && model.id.length > 0 && typeof model.label === "string" && model.label.length > 0);
+    model && typeof model.id === "string" && model.id.length > 0 && typeof model.label === "string" && model.label.length > 0 &&
+    (model.efforts === undefined || (Array.isArray(model.efforts) && model.efforts.length > 0 && model.efforts.every((e) => typeof e === "string" && e.length > 0))));
 }
 
 /** codex and grok are required; claude, added later, is checked when present so older catalogs stay valid. */

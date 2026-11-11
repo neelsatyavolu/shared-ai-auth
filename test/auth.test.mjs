@@ -13,6 +13,14 @@ test("bundled catalog offers only the six selected models", () => {
   assert.deepEqual(bundledModels.claude.map((model) => model.id), ["claude-fable-5-2", "claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"]);
 });
 
+test("each bundled model lists its efforts, and a bad efforts list makes the catalog invalid", async () => {
+  for (const model of [...bundledModels.codex, ...bundledModels.grok, ...bundledModels.claude]) assert.ok(model.efforts.length > 0, model.id);
+  assert.deepEqual(bundledModels.codex[0].efforts, ["low", "medium", "high", "xhigh", "max", "ultra"]);
+  const remote = { version: 1, codex: [{ id: "a", label: "A", efforts: [] }], grok: [{ id: "g", label: "G" }] };
+  const loaded = await loadModels({ url: "https://example.test/models.json", fetch: async () => ({ ok: true, json: async () => remote }) });
+  assert.equal(loaded, bundledModels);
+});
+
 test("claude signs in at claude.com with the manual callback and code=true", () => {
   const pkce = generatePkce();
   const url = new URL(authorizeUrl("claude", pkce));

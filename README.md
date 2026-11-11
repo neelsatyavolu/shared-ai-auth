@@ -4,6 +4,8 @@ This package holds the Codex, Grok and Claude OAuth client settings and PKCE/tok
 
 `models.json` is the single editable model list. Already deployed apps can refresh it from `MODEL_CATALOG_URL`; `loadModels()` returns the bundled snapshot if the public file is unavailable or invalid. Call it on the server or in the desktop main process, and cache the result for a few minutes in the app. Do not fetch OAuth tokens or the model catalog from an untrusted URL.
 
+Each model may list `efforts`, the reasoning efforts it accepts from lowest to highest (Codex goes up to `ultra`, Claude to `max`), and `effort`, its default. Both are optional, so check for them before use.
+
 It is not on npm. Install it from GitHub, pinned to a commit (Node 18 or later):
 
 ```sh

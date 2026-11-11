@@ -1,7 +1,8 @@
 export type Provider = "codex" | "grok" | "claude";
 export type PKCE = { verifier: string; challenge: string; state: string };
 export type Tokens = { accessToken: string; refreshToken: string; expiresAt: number; idToken?: string; accountId?: string };
-export type Model = { id: string; label: string; tier?: string; effort?: string };
+/** `effort` is the model's default; `efforts`, when present, lists every reasoning effort it accepts, lowest first. */
+export type Model = { id: string; label: string; tier?: string; effort?: string; efforts?: string[] };
 export type ModelCatalog = { version: 1; codex: Model[]; grok: Model[]; claude?: Model[] };
 export declare const providers: Record<Provider, { clientId: string; redirectUri: string; authorizeUrl: string; tokenUrl: string; scope: string; expirySkew: number; extraAuthorizeParams: Record<string, string>; tokenFormat?: "json" }>;
 export declare const MODEL_CATALOG_URL: string;
