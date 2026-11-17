@@ -8,7 +8,7 @@ import {
 import { createHash } from "node:crypto";
 
 test("bundled catalog offers only the six selected models", () => {
-  assert.deepEqual(bundledModels.codex.map((model) => model.id), ["gpt-6-astra", "gpt-6.1-sol", "gpt-6.1-terra", "gpt-6-luna"]);
+  assert.deepEqual(bundledModels.codex.map((model) => model.id), ["gpt-6.2-astra", "gpt-6.2-sol", "gpt-6.1-terra", "gpt-6-luna"]);
   assert.deepEqual(bundledModels.grok.map((model) => model.id), ["grok-4.7", "grok-4.6"]);
   assert.deepEqual(bundledModels.claude.map((model) => model.id), ["claude-fable-5-2", "claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-5-5"]);
 });
